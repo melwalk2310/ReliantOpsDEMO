@@ -1,24 +1,24 @@
+import statistics
 import json
 
 def detect_anomalies(data):
-    # Lógica simplificada de Z-Score para el demo
-    mean = sum(data) / len(data)
-    threshold = 2.0
+    if len(data) < 2: return []
+    mean = statistics.mean(data)
+    std_dev = statistics.stdev(data)
+    threshold = 2.0 # Standard Sigma-2
+    
     results = []
-    
     for i, val in enumerate(data):
-        z_score = abs(val - mean) / 10 # Simplificado
-        is_anomaly = z_score > threshold
+        z_score = abs(val - mean) / std_dev if std_dev > 0 else 0
         results.append({
-            "index": i,
-            "value": val,
+            "index": i, "value": val,
             "z_score": round(z_score, 2),
-            "anomaly": is_anomaly
+            "anomaly": z_score > threshold
         })
-    
     return results
 
 if __name__ == "__main__":
-    sample_data = [10, 12, 11, 105, 13, 11, 12, 98, 10] # 105 y 98 son picos
-    anomalies = detect_anomalies(sample_data)
-    print(json.dumps(anomalies, indent=2))
+    print("--- ReliantOps Statistical Engine (Z-Score) ---")
+    data = [12, 11, 13, 12, 105, 11, 12, 98, 11, 12]
+    print(json.dumps(detect_anomalies(data), indent=2))
+
