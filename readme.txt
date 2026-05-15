@@ -1,19 +1,33 @@
-# ReliantOps | Security Automation Research
+# ReliantOps | Security Automation & Infrastructure Resilience
 
-A collection of Python components exploring **Sovereign Infrastructure** patterns and **System-Aware Governance**.
+A collection of Python components exploring **Deterministic Governance** patterns and **System-Aware Security**.
 
 ## 🚀 Technical Proof-of-Concept
-This repository contains a functional PoC of the GEN-369 architectural concepts:
-- **`guardrails_demo.py`**: A context-aware command veto engine.
-- **`Detector_demo.py`**: Statistical anomaly detection using standard Z-Score.
-- **`test_reliantops.py`**: Automated unit tests (3/3 passing).
+This repository contains functional demos of the ReliantOps architectural concepts, focusing on contextual command validation and statistical anomaly detection.
 
-## 🛡️ Current Status (Self-Assessment)
-- **Scope:** Academic/Personal Research (Homelab environment).
-- **Validation:** Unit-tested via `pytest`.
-- **Latency:** Sub-millisecond performance in local benchmarks.
+### 1. Contextual Veto Engine (`guardrails_demo.py`)
+Demonstrates a **System-Aware Veto** logic. Unlike static blacklists, it evaluates real-time system state (CPU load via `os.getloadavg`) before deciding whether a command trajectory is safe.
+- **Latency:** Measured using `time.perf_counter_ns()`. Decisions typically execute in sub-millisecond timeframes in local environments.
 
-## 📈 The Journey
-ReliantOps is my personal "SRE R&D" project. Built over one year of intensive self-directed study, it represents my commitment to building safer, more deterministic infrastructure.
+### 2. Statistical Anomaly Detector (`Detector_demo.py`)
+Implements an outlier detection engine using a standard **Z-Score (Sigma-2)** algorithm. It identifies system perturbations based on real-time standard deviation.
 
-**I am currently seeking a Junior SRE / Security Automation role** where I can apply these patterns under professional mentorship and gain the production-grade experience needed to evolve these tools for global scale.
+### 3. Automated Testing (`test_reliantops.py`)
+We use `pytest` to ensure that security invariants (like blocking root destruction or critical resource exhaustion) are consistently preserved.
+
+## 🛠️ Installation & Usage
+```bash
+# Clone the repository
+git clone https://github.com/melwalk2310/ReliantOpsDEMO
+cd ReliantOpsDEMO
+
+# Install dependencies
+pip install pytest
+
+# Run the demos
+python guardrails_demo.py
+python Detector_demo.py
+
+# Run the tests
+pytest test_reliantops.py
+
