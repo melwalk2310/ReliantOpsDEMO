@@ -1,13 +1,15 @@
-# ReliantOps GEN-369 | Engineering Demos
+# ReliantOps | Real-Time Security Automation
 
-This is not a "blacklist" or a simple script. These demos illustrate the **Deterministic Veto Logic** and **Statistical Anomaly Detection** used in the Sovereign Kernel.
+Technical demos focused on **System-Aware Governance**.
 
-### 🧠 Contextual Veto (Trajectory)
-Unlike static firewalls, ReliantOps evaluates the **System State** before a command is executed.
-- `guardrails_demo.py`: Demonstrates a Veto triggered by **Context** (High CPU + Stress Command).
+## 🛠️ Real-Time Veto Engine (`guardrails_demo.py`)
+- **Metric Source:** Reads real system load via `os.getloadavg()`.
+- **Performance:** Measured using `time.perf_counter_ns()`.
+- **Logic:** Contextual Veto based on CPU state + Command Trajectory.
 
-### 📈 Statistical Engine
-- `detector_demo.py`: Implements a standard **Z-Score (Sigma-2)** outlier detection using real-time standard deviation.
+## ✅ Automated Testing
+We use `pytest` to ensure architectural invariants are preserved.
+```bash
+pip install pytest
+pytest demo/test_reliantops.py
 
-### 🛡️ Verified Integrity
-All outputs are hash-chained (RSM pattern) in the full implementation to ensure forensic auditability.
