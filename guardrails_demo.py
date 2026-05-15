@@ -1,26 +1,44 @@
 import time
+import os
 
-def evaluate_trajectory(command, system_state):
-    """
-    Veto logic based on State + Command (Trajectory).
-    Rule: If CPU is critical, any high-load command is VETOED.
-    """
-    print(f"\n[SYSTEM_STATE] CPU: {system_state['cpu']}% | Mem: {system_state['mem']}%")
-    print(f"[ACTION] Requested: {command}")
+def get_real_cpu():
+    # Obtiene la carga del sistema en Linux/Mac. Fallback a 0 en Windows.
+    try:
+        return os.getloadavg()[0] * 10 # Carga promedio de 1 min
+    except:
+        return 20.0 # Valor simulado si no es Linux
+
+def evaluate_trajectory(command):
+    # Medir latencia en nanosegundos
+    start_time = time.perf_counter_ns()
     
-    # Logic: Contextual Veto
-    if system_state['cpu'] > 80 and "stress" in command:
-        return "VETO: Resource exhaustion trajectory detected. CPU is at critical levels."
+    cpu_load = get_real_cpu()
+    print(f"[OS_METRICS] Real CPU Load: {cpu_load:.2f}")
+    
+    # Lógica de Veto Contextual
+    veto = False
+    reason = ""
+    
+    if cpu_load > 8.0 and "stress" in command: # Si la carga es > 80% (escala 0-10)
+        veto = True
+        reason = "System resources critical. High-load trajectory blocked."
     
     if "rm -rf /" in command:
-        return "VETO: Destructive root trajectory detected. Operation forbidden."
-        
-    return "ALLOWED"
+        veto = True
+        reason = "Forbidden root trajectory detected."
+    
+    end_time = time.perf_counter_ns()
+    latency_ns = end_time - start_time
+    
+    return {
+        "status": "VETO" if veto else "ALLOWED",
+        "reason": reason,
+        "latency_ns": latency_ns,
+        "latency_ms": latency_ns / 1_000_000
+    }
 
 if __name__ == "__main__":
-    print("--- ReliantOps Contextual Veto Engine ---")
-    # Escenario 1: Comando normal con sistema sano
-    print(f"Result: {evaluate_trajectory('ls -la', {'cpu': 15, 'mem': 30})}")
-    
-    # Escenario 2: Comando de carga con sistema CRÍTICO (TRAYECTORIA)
-    print(f"Result: {evaluate_trajectory('stress-ng --cpu 4', {'cpu': 85, 'mem': 40})}")
+    print("--- ReliantOps Real-Time Veto Engine ---")
+    result = evaluate_trajectory("rm -rf /data")
+    print(f"Result: {result['status']} | {result['reason']}")
+    print(f"Latency: {result['latency_ns']} ns ({result['latency_ms']:.4f} ms)")
